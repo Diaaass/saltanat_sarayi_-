@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /thx.html
+
+Sitemap: https://saltanat-saraiy.kz/sitemap.xml
