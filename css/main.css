@@ -420,6 +420,7 @@
   color: var(--color-muted);
 }
 .footer__made{
+  display: inline-block;
   text-decoration: none;
   color: inherit;
 }
@@ -792,17 +793,29 @@
 }
 .about__row{
   display: flex;
-  justify-content: center;
   gap: calc(36 * var(--width-multiplier));
   height: calc(416 * var(--width-multiplier));
   margin-top: calc(54 * var(--width-multiplier));
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  padding-inline: calc(60 * var(--width-multiplier));
+  touch-action: pan-x;
+  cursor: grab;
 }
+.about__row::-webkit-scrollbar{ display: none; }
+.about__row.is-dragging{ cursor: grabbing; scroll-behavior: auto; }
 .about__photo{
   position: relative;
   display: block;
   width: calc(648 * var(--width-multiplier));
   height: 100%;
   flex-shrink: 0;
+  scroll-snap-align: center;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 .about__photo img{
   display: block;
@@ -1303,18 +1316,29 @@
 }
 .gallery__row{
   display: flex;
-  justify-content: center;
   gap: calc(36 * var(--width-multiplier));
   height: calc(416 * var(--width-multiplier));
-
   margin-top: calc(54 * var(--width-multiplier));
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  padding-inline: calc(60 * var(--width-multiplier));
+  touch-action: pan-x;
+  cursor: grab;
 }
+.gallery__row::-webkit-scrollbar{ display: none; }
+.gallery__row.is-dragging{ cursor: grabbing; scroll-behavior: auto; }
 .gallery__photo{
   position: relative;
   display: block;
   width: calc(648 * var(--width-multiplier));
   height: 100%;
   flex-shrink: 0;
+  scroll-snap-align: center;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 .gallery__photo img{
   display: block;
@@ -1349,12 +1373,11 @@
 }
 
 .contacts__top{
-
   width: calc(1320 * var(--width-multiplier));
   margin: 0 auto;
   display: flex;
+  align-items: center;
   justify-content: space-between;
-
   gap: calc(80 * var(--width-multiplier));
 }
 
@@ -1447,14 +1470,10 @@
 
 .contacts__form-wrap{
   position: relative;
-
   overflow: hidden;
   flex: 0 0 auto;
-
   width: calc(581 * var(--width-multiplier));
   height: calc(600 * var(--width-multiplier));
-
-  margin-top: calc(80 * var(--width-multiplier));
 }
 
 .contacts__envelope{

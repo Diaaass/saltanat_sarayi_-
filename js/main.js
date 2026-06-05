@@ -181,6 +181,43 @@
     });
   }
 
+  document.querySelectorAll('.about__row, .gallery__row').forEach((row) => {
+    let down = false, startX = 0, startScroll = 0, moved = 0;
+    row.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'touch') return;
+      down = true; moved = 0;
+      startX = e.clientX;
+      startScroll = row.scrollLeft;
+      row.classList.add('is-dragging');
+      row.setPointerCapture(e.pointerId);
+    });
+    row.addEventListener('pointermove', (e) => {
+      if (!down) return;
+      const dx = e.clientX - startX;
+      moved = Math.abs(dx);
+      row.scrollLeft = startScroll - dx;
+    });
+    const end = () => {
+      if (!down) return;
+      down = false;
+      row.classList.remove('is-dragging');
+      if (moved > 5) {
+        const click = (ev) => { ev.preventDefault(); ev.stopPropagation(); row.removeEventListener('click', click, true); };
+        row.addEventListener('click', click, true);
+      }
+    };
+    row.addEventListener('pointerup', end);
+    row.addEventListener('pointercancel', end);
+    row.addEventListener('pointerleave', end);
+
+    row.addEventListener('wheel', (e) => {
+      if (e.deltaY === 0 || e.shiftKey) return;
+      if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+      e.preventDefault();
+      row.scrollLeft += e.deltaY;
+    }, { passive: false });
+  });
+
   if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
     gsap.registerPlugin(ScrollTrigger);
 
