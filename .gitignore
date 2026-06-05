@@ -1,0 +1,21 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Editor / tooling
+.claude/
+.idea/
+.vscode/
+
+# Build / deps (на всякий)
+node_modules/
+dist/
+.cache/
+
+# Сырые ассеты с Figma (~151MB) — остаются у дизайнера локально, в репо не нужны
+img/хиро/
+img/о комплексе/
+img/почему выбирают нас/
+img/площадки/
+img/мероприятия/
+img/галереяатмосферы/

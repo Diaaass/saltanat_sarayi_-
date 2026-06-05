@@ -1,47 +1,1894 @@
 /* =========================================================================
    Saltanat Saraiy — main.css
-   Скелет. Critical-часть (normalize/reset/:root-токены/контейнер/сетка/утилиты)
-   инлайнится в <head> каждой страницы. Здесь — типографика, компоненты и секции.
+   Critical-часть (normalize/reset/токены/контейнер/сетка/утилиты) инлайнится
+   в <head> каждой страницы. Здесь — типографика, компоненты и секции.
    ========================================================================= */
 
 /* -------------------------------------------------------------------------
-   1. Типографика (заголовки, текст, акценты)
+   1. Типографика (базовые helper-классы)
    ------------------------------------------------------------------------- */
-/* TODO: heading-1..6, .text-16/.text-14, .caps, .accent — на шаге 2 */
+.serif{ font-family: var(--font-family-accent); }
+.caps{ text-transform: uppercase; letter-spacing: .08em; }
 
 
-/* -------------------------------------------------------------------------
+/* =========================================================================
    2. Глобальные компоненты
-   ------------------------------------------------------------------------- */
-/* TODO: .header, .footer, .burger, .menu */
-/* TODO: .btn (primary filled / outline / варианты под фон площадок) */
-/* TODO: .chip (.tags__item) */
-/* TODO: .accordion (нативный <details>) */
-/* TODO: .venue__badge (overlay-карточка) */
-/* TODO: .modal (#modal-feedback) */
+   ========================================================================= */
+
+/* ---------- 2.1 Кнопки (.btn) ----------------------------------------------
+   Темизация через CSS-переменные на родительском контейнере секции:
+     --btn-bg          фон filled-кнопки
+     --btn-fg          текст filled-кнопки
+     --btn-outline-fg  цвет outline-кнопки (рамка + текст)
+     --btn-outline-bg  фон outline/ghost-кнопки (по умолчанию прозрачный)
+   Дефолты вынесены в fallback внутри `var(--name, default)`, чтобы
+   родительский контейнер (.hero, .venue--<id>) мог переопределять
+   переменные через наследование. На самом .btn переменные не задаём —
+   иначе локальное определение перебило бы каскад.
+--------------------------------------------------------------------------- */
+.btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(16 * var(--width-multiplier));
+  padding: calc(12 * var(--width-multiplier)) calc(24 * var(--width-multiplier));
+  font-family: var(--font-family-base);
+  font-size: calc(16 * var(--width-multiplier));
+  font-weight: 400;
+  line-height: 1;
+  text-transform: none;
+  text-decoration: none;
+  background: var(--btn-bg, var(--color-espresso));
+  color: var(--btn-fg, var(--color-cream));
+  border: 1px solid var(--btn-bg, var(--color-espresso));
+  border-radius: 100px;
+  cursor: pointer;
+  transition: background-color var(--transition), color var(--transition),
+              border-color var(--transition), opacity var(--transition);
+}
+.btn--primary{ /* алиас дефолта */ }
+.btn--outline{
+  background: var(--btn-outline-bg, transparent);
+  color: var(--btn-outline-fg, var(--color-espresso));
+  border-color: var(--btn-outline-fg, var(--color-espresso));
+}
+.btn:hover{ opacity: .85; }
+.btn:focus-visible{
+  outline: 2px solid var(--color-gold);
+  outline-offset: 3px;
+}
+.btn__icon{
+  width: calc(22 * var(--width-multiplier));
+  height: calc(10 * var(--width-multiplier));
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+}
 
 
-/* -------------------------------------------------------------------------
-   3. Страница index.html — секции по порядку
-   ------------------------------------------------------------------------- */
-/* TODO: .hero */
-/* TODO: .why */
-/* TODO: .about */
-/* TODO: .venues (scroll-switcher: pin + snap + GSAP ScrollTrigger), .venue, .venue--<id> */
-/* TODO: .events */
-/* TODO: .gallery */
-/* TODO: .contacts (форма-конверт) */
-/* TODO: .map */
+/* ---------- 2.2 Чипы (.chip) -----------------------------------------------
+   Темизация: --chip-color (рамка + текст). Дефолт = espresso.
+   Площадки переопределяют --chip-color на своём контейнере.
+--------------------------------------------------------------------------- */
+.chip{
+  --chip-color: var(--color-espresso);
+
+  display: inline-flex;
+  align-items: center;
+  padding: calc(8 * var(--width-multiplier)) calc(16 * var(--width-multiplier));
+  font-family: var(--font-family-base);
+  font-size: calc(13 * var(--width-multiplier));
+  line-height: 1.2;
+  color: var(--chip-color);
+  background: transparent;
+  border: 1px solid var(--chip-color);
+  border-radius: 999px;
+  white-space: nowrap;
+}
 
 
-/* -------------------------------------------------------------------------
-   4. Страницы thx.html / 404.html
-   ------------------------------------------------------------------------- */
-/* TODO: .thx (страница благодарности) */
-/* TODO: .not-found */
+/* ---------- 2.3 Аккордеон (.accordion) — нативный <details> ---------------- */
+.accordion{
+  --accordion-border: rgba(0, 0, 0, .15);
+  border-top: 1px solid var(--accordion-border);
+}
+.accordion + .accordion{ /* линия сверху уже есть */ }
+.accordion:last-of-type{ border-bottom: 1px solid var(--accordion-border); }
+
+.accordion__summary{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(16 * var(--width-multiplier));
+  padding-block: calc(20 * var(--width-multiplier));
+  font-family: var(--font-family-base);
+  font-size: calc(18 * var(--width-multiplier));
+  font-weight: 500;
+  cursor: pointer;
+  list-style: none;
+}
+.accordion__summary::-webkit-details-marker{ display: none; }
+.accordion__summary::marker{ content: ""; }
+
+.accordion__chevron{
+  width: calc(16 * var(--width-multiplier));
+  height: calc(16 * var(--width-multiplier));
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  transition: transform var(--transition);
+}
+.accordion[open] > .accordion__summary .accordion__chevron{ transform: rotate(180deg); }
+
+.accordion__content{
+  padding-bottom: calc(24 * var(--width-multiplier));
+}
+.accordion__list{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: calc(32 * var(--width-multiplier));
+  row-gap: calc(10 * var(--width-multiplier));
+  font-size: calc(15 * var(--width-multiplier));
+}
+.accordion__item{
+  display: flex;
+  align-items: baseline;
+  gap: calc(8 * var(--width-multiplier));
+}
+.accordion__item::before{
+  content: "—";
+  flex-shrink: 0;
+}
+@media (width <= 768.98px){
+  .accordion__list{ grid-template-columns: 1fr; }
+}
 
 
-/* -------------------------------------------------------------------------
-   5. Адаптив (точечные переопределения; брейкпоинты — 1024.98 / 768.98)
-   ------------------------------------------------------------------------- */
-/* TODO: tablet / mobile overrides */
+/* ---------- 2.4 Overlay-карточка площадки (.venue__badge) ------------------
+   Маленькая карточка поверх большого фото площадки.
+   Светлая (дефолт) и тёмная — через --venue-badge-bg/--venue-badge-fg
+   (или модификатор .venue__badge--dark).
+   Орнамент сверху/снизу — пока плейсхолдер (линия с золотым акцентом);
+   заменим на SVG-флёр (gold filigree) из Figma.
+--------------------------------------------------------------------------- */
+.venue__badge{
+  --venue-badge-bg: #fff;
+  --venue-badge-fg: var(--color-text);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(14 * var(--width-multiplier));
+  padding: calc(28 * var(--width-multiplier)) calc(32 * var(--width-multiplier));
+  background: var(--venue-badge-bg);
+  color: var(--venue-badge-fg);
+  text-align: center;
+  font-family: var(--font-family-accent);
+}
+.venue__badge--dark{
+  --venue-badge-bg: var(--color-dark);
+  --venue-badge-fg: var(--color-cream);
+}
+.venue__badge__ornament{
+  display: block;
+  width: calc(72 * var(--width-multiplier));
+  height: calc(10 * var(--width-multiplier));
+  /* TODO: заменить на SVG-флёр (gold filigree) из Figma */
+  background: linear-gradient(to right, transparent 0%, var(--color-gold) 50%, transparent 100%);
+  opacity: .8;
+}
+.venue__badge__text{
+  font-size: calc(17 * var(--width-multiplier));
+  line-height: 1.3;
+}
+.venue__badge__divider{
+  display: flex;
+  align-items: center;
+  gap: calc(6 * var(--width-multiplier));
+  width: 100%;
+  color: currentColor;
+}
+.venue__badge__divider::before,
+.venue__badge__divider::after{
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: currentColor;
+  opacity: .4;
+}
+.venue__badge__divider::after{ /* симметрия */ }
+.venue__badge__dot{
+  width: calc(4 * var(--width-multiplier));
+  height: calc(4 * var(--width-multiplier));
+  border-radius: 50%;
+  background: currentColor;
+  opacity: .6;
+  flex-shrink: 0;
+}
+.venue__badge__capacity{
+  font-family: var(--font-family-base);
+  font-size: calc(14 * var(--width-multiplier));
+  letter-spacing: .02em;
+}
+/*
+   Пример разметки (используется в .venue на шаге 3):
+
+   <div class="venue__badge venue__badge--dark">
+     <svg class="venue__badge__ornament" aria-hidden="true"></svg>
+     <div class="venue__badge__text">Банкетный зал для камерных и масштабных торжеств</div>
+     <div class="venue__badge__divider"><span class="venue__badge__dot"></span></div>
+     <div class="venue__badge__capacity">до 400 гостей</div>
+     <svg class="venue__badge__ornament" aria-hidden="true"></svg>
+   </div>
+*/
+
+
+/* ---------- 2.5 Header (.header) ------------------------------------------
+   Header НЕ следует за скроллом (не fixed) — сидит в начале документа
+   и уезжает наверх вместе со страницей.
+   На главной (data-page="home") — оверлей поверх hero (position: absolute,
+   transparent фон, cream текст), не занимает место в потоке.
+   На остальных страницах — обычная in-flow шапка с cream фоном. */
+.page{ position: relative; }    /* containing-block для абсолютного header на home */
+.header{
+  position: relative;
+  z-index: 100;
+  height: var(--header-height);
+  background: var(--color-cream);
+  color: var(--color-text);
+  transition: background-color var(--transition), color var(--transition);
+}
+.page[data-page="home"] .header{
+  position: absolute;
+  inset: 0 0 auto 0;
+  background: transparent;
+  color: var(--color-cream);
+}
+/* Когда мобильное меню открыто — header поверх cream-фона,
+   поэтому белое лого/бургер становятся невидимыми. Переключаем на dark.
+   Указываем .page чтобы перебить специфичность .page[data-page="home"] .header. */
+.page .header.menu-active{
+  color: var(--color-ink);
+  background: transparent;
+}
+
+.header__container{
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  height: 100%;
+  gap: calc(72 * var(--width-multiplier));
+}
+
+.header__nav{
+  display: flex;
+  align-items: center;
+  gap: calc(72 * var(--width-multiplier));
+}
+.header__nav--left{ justify-self: end; }
+
+.header__link{
+  font-family: var(--font-family-base);
+  font-size: calc(16 * var(--width-multiplier));
+  font-weight: 400;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0;
+  text-decoration: none;
+  color: inherit;
+  white-space: nowrap;
+}
+.header__link:hover{ opacity: .7; }
+.header__link:focus-visible{ outline: 2px solid currentColor; outline-offset: 4px; }
+
+.header__logo{
+  justify-self: center;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+}
+/* Логотип-маска: SVG-файл задаёт силуэт, заливка — currentColor,
+   за счёт чего лого корректно перекрашивается под фон (cream / dark).
+   Размер 128×68 — прямо из Figma Inspector (lugo top=24, left=656 на 1440).
+   Aspect 128/68 = 1.882 ≈ SVG aspect 283/150 = 1.887 → mask: contain почти
+   1-в-1 без padding внутри box. */
+.header__logo-mark{
+  display: block;
+  width: calc(128 * var(--width-multiplier));
+  height: calc(68 * var(--width-multiplier));
+  background-color: currentColor;
+  -webkit-mask: url(../img/logo.svg) center/contain no-repeat;
+          mask: url(../img/logo.svg) center/contain no-repeat;
+}
+
+.header__right{
+  justify-self: start;
+  display: flex;
+  align-items: center;
+  gap: calc(24 * var(--width-multiplier));
+}
+
+/* Бургер — мобильная SVG-кнопка (56×56 как в Figma «menu btn»).
+   SVG содержит и круг-фон, и линии — отдельные spans больше не нужны. */
+.burger{
+  display: inline-flex;
+  width: calc(56 * var(--width-multiplier));
+  height: calc(56 * var(--width-multiplier));
+  padding: 0;
+  background: none;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+}
+.burger img{
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+/* Когда меню открыто — прячем бургер (закрытие через .menu__close) */
+.menu-active .burger{ visibility: hidden; }
+
+/* Мобильное меню-оверлей */
+/* Мобильное меню — full-screen takeover cream-фоном.
+   Figma: лого слева сверху, X справа сверху, орнамент-флёр сверху,
+   5 nav-ссылок по центру (Forum 28px, #261600, gap 20), орнамент снизу.
+   Лого даёт header (z:100 над меню) с переключением color на ink. */
+.menu{
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* блок навигации с орнаментами центрируется по высоте */
+  gap: calc(40 * var(--width-multiplier));
+  padding: var(--header-height) calc(20 * var(--width-multiplier)) calc(40 * var(--width-multiplier));
+  background: var(--color-cream);
+  color: var(--color-ink);
+  overflow-y: auto;
+}
+.menu-active .menu{ display: flex; }
+@media (width > 768.98px){
+  .menu{ display: none !important; }
+}
+
+/* Круглая X-кнопка закрытия (56×56), правый верхний угол.
+   Inspect: top 22 / right 16 (mobile 390). SVG целиком содержит круг+X. */
+.menu__close{
+  position: fixed;
+  top: calc(22 * var(--width-multiplier));
+  right: calc(16 * var(--width-multiplier));
+  z-index: 110; /* выше .menu и выше .header — всегда кликабельна */
+  width: calc(56 * var(--width-multiplier));
+  height: calc(56 * var(--width-multiplier));
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.menu__close img{
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Декоративные орнаменты сверху/снизу от навигации.
+   Inspect: 70×70 PNG/SVG из Figma (ornament-menu.svg). */
+.menu__ornament{
+  display: block;
+  width: calc(70 * var(--width-multiplier));
+  height: calc(70 * var(--width-multiplier));
+  object-fit: contain;
+}
+.menu__ornament--bottom{ transform: scaleY(-1); }
+
+.menu__nav{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Inspect: gap 20 между пунктами навигации */
+  gap: calc(20 * var(--width-multiplier));
+}
+.menu__link{
+  font-family: var(--font-family-accent);
+  font-weight: 400;
+  /* Inspect: Forum 28px / 100% / center, цвет #261600 */
+  font-size: calc(28 * var(--width-multiplier));
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: none;
+  text-align: center;
+  text-decoration: none;
+  color: var(--color-ink);
+  border: 0;
+  padding: 0;
+}
+
+/* Header адаптив — Figma mobile: header 358×56, top 67, left 16.
+   Лого слева, бургер справа, padding по бокам 16. */
+@media (width <= 768.98px){
+  .header{
+    height: calc((67 + 56) * var(--width-multiplier)); /* status-bar offset + content */
+  }
+  .header__container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 calc(16 * var(--width-multiplier));
+    height: calc(56 * var(--width-multiplier));
+    margin-top: calc(67 * var(--width-multiplier));
+    gap: 0;
+  }
+  .header__logo{ justify-self: start; }
+  .header__right{ justify-self: end; gap: 0; }
+  /* Лого мобильное — новый mark-only SVG 50×50 (Figma «лого»).
+     currentColor → перекрашивается под header (cream на hero / ink в меню). */
+  .header__logo-mark{
+    width: calc(50 * var(--width-multiplier));
+    height: calc(50 * var(--width-multiplier));
+  }
+}
+
+
+/* ---------- 2.6 Footer (.footer) ------------------------------------------ */
+.footer{
+  background: var(--color-cream);
+  color: var(--color-text);
+  padding-block: calc(80 * var(--width-multiplier)) calc(32 * var(--width-multiplier));
+}
+.footer__container{
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  column-gap: calc(60 * var(--width-multiplier));
+  row-gap: calc(60 * var(--width-multiplier));
+  align-items: start;
+}
+.footer__brand{
+  display: flex;
+  flex-direction: column;
+  gap: calc(16 * var(--width-multiplier));
+}
+.footer__logo{
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+}
+.footer__logo-mark{
+  /* Лого теперь mark-only (50×50 SVG из Figma «лого»). Сохраняем 1:1 aspect. */
+  display: block;
+  width: calc(96 * var(--width-multiplier));
+  height: calc(96 * var(--width-multiplier));
+  background-color: currentColor;
+  -webkit-mask: url(../img/logo.svg) center/contain no-repeat;
+          mask: url(../img/logo.svg) center/contain no-repeat;
+}
+.footer__col-title{
+  margin: 0 0 calc(20 * var(--width-multiplier));
+  font-family: var(--font-family-base);
+  font-size: calc(12 * var(--width-multiplier));
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--color-muted);
+}
+.footer__list{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: calc(12 * var(--width-multiplier));
+}
+.footer__link{
+  text-decoration: none;
+  color: var(--color-text);
+  font-size: calc(15 * var(--width-multiplier));
+}
+.footer__link:hover{ opacity: .65; }
+
+.footer__bottom{
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: calc(24 * var(--width-multiplier));
+  padding-top: calc(32 * var(--width-multiplier));
+  border-top: 1px solid rgba(0, 0, 0, .08);
+  font-size: calc(13 * var(--width-multiplier));
+  color: var(--color-muted);
+}
+.footer__made{
+  text-decoration: none;
+  color: inherit;
+}
+.footer__made-mark{
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+@media (width <= 1024.98px){
+  .footer__container{ grid-template-columns: 1fr 1fr; }
+}
+@media (width <= 768.98px){
+  .footer__container{
+    grid-template-columns: 1fr;
+    row-gap: calc(40 * var(--width-multiplier));
+  }
+  .footer__bottom{
+    flex-direction: column;
+    align-items: flex-start;
+    gap: calc(12 * var(--width-multiplier));
+  }
+  /* Мобиле лого ещё меньше, square 1:1 (mark-only) */
+  .footer__logo-mark{
+    width: calc(64 * var(--width-multiplier));
+    height: calc(64 * var(--width-multiplier));
+  }
+}
+
+
+/* ---------- 2.7 Модалка (#modal-feedback / .modal) ------------------------- */
+.modal{
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: calc(20 * var(--width-multiplier));
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity var(--transition), visibility var(--transition);
+}
+.modal[aria-hidden="false"]{
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+.modal__overlay{
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, .55);
+  cursor: pointer;
+}
+.modal__dialog{
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: calc(480 * var(--width-multiplier));
+  padding: calc(48 * var(--width-multiplier)) calc(40 * var(--width-multiplier));
+  background: var(--color-cream);
+  color: var(--color-text);
+  display: flex;
+  flex-direction: column;
+  gap: calc(24 * var(--width-multiplier));
+}
+.modal__close{
+  position: absolute;
+  top: calc(16 * var(--width-multiplier));
+  right: calc(16 * var(--width-multiplier));
+  width: calc(36 * var(--width-multiplier));
+  height: calc(36 * var(--width-multiplier));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--color-text);
+  cursor: pointer;
+}
+.modal__close:focus-visible{
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+}
+.modal__title{
+  margin: 0;
+  font-family: var(--font-family-accent);
+  font-size: calc(28 * var(--width-multiplier));
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  text-align: center;
+}
+.modal__form{
+  display: flex;
+  flex-direction: column;
+  gap: calc(14 * var(--width-multiplier));
+}
+.modal__field{
+  width: 100%;
+  padding: calc(14 * var(--width-multiplier)) calc(20 * var(--width-multiplier));
+  font-family: var(--font-family-base);
+  font-size: calc(15 * var(--width-multiplier));
+  color: var(--color-text);
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, .2);
+  border-radius: 0;
+}
+.modal__field::placeholder{ color: var(--color-muted); }
+.modal__field:focus{
+  outline: none;
+  border-color: var(--color-espresso);
+}
+.modal__submit{
+  align-self: center;
+  margin-top: calc(8 * var(--width-multiplier));
+}
+
+
+/* =========================================================================
+   3. Страница index.html — секции по порядку (шаг 3)
+   =========================================================================
+
+   Контейнер шапки секций: где макет шире стандартных 1240, секция объявляет
+   свой собственный __container с фиксированной fluid-шириной. Стандартный
+   .container utility оставлен для секций, попадающих в 1240. */
+
+/* ---------- 3.1 Hero (.hero) ----------------------------------------------
+   Видеофон (poster + <video>) + тёмный оверлей + центрированный текст.
+   prefers-reduced-motion: видео скрывается, видим только постер.
+   Кнопки секции инвертированы под тёмный фон (см. переменные .btn-* ниже).
+--------------------------------------------------------------------------- */
+.hero{
+  /* инвертированная палитра кнопок поверх тёмного видеофона */
+  --btn-bg: #FEFCF3;
+  --btn-fg: var(--color-espresso);
+  --btn-outline-fg: #FEFCF3;
+  --btn-outline-bg: rgba(254, 252, 243, .2);
+
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--header-height) 0 calc(80 * var(--width-multiplier));
+  text-align: center;
+  color: var(--color-cream);
+  overflow: hidden;
+}
+.hero__media{
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+}
+.hero__poster{
+  display: block;
+  position: absolute;
+  inset: 0;
+}
+.hero__poster img,
+.hero__video{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.hero__video{ z-index: 1; }
+.hero__overlay{
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: rgba(0, 0, 0, .5);
+}
+.hero__container{
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+.hero__title{
+  margin: 0 0 calc(28 * var(--width-multiplier));
+  max-width: calc(1096 * var(--width-multiplier));
+  font-family: var(--font-family-accent);
+  font-weight: 400;
+  font-size: calc(64 * var(--width-multiplier));
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  overflow-wrap: break-word;
+  text-wrap: balance;
+}
+.hero__subtitle{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: baseline;
+  gap: calc(6 * var(--width-multiplier)) calc(12 * var(--width-multiplier));
+  margin: 0 0 calc(40 * var(--width-multiplier));
+  font-family: var(--font-family-base);
+  font-weight: 400;
+  font-size: calc(20 * var(--width-multiplier));
+  line-height: 1;
+  letter-spacing: 0;
+  color: var(--color-cream);
+}
+.hero__sep{
+  opacity: .55;
+  font-weight: 300;
+}
+/* Inspect Figma mobile (390-art): «Узнать стоимость» — cream pill со стрелкой;
+   «Забронировать дату» — dark pill, оба 358×56 r100 padding 12/24 gap 16. */
+.hero__cta--primary{
+  --btn-bg: var(--color-cream);
+  --btn-fg: var(--color-ink);
+}
+.hero__cta--secondary{
+  --btn-bg: var(--color-dark);
+  --btn-fg: var(--color-cream);
+}
+
+.hero__actions{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: calc(16 * var(--width-multiplier));
+}
+
+@media (width <= 1024.98px){
+  .hero__title{ font-size: calc(44 * var(--width-multiplier)); }
+}
+@media (width <= 768.98px){
+  /* ---- HERO ---- (Inspect: title 31px, subtitle 16px, button 358×56 r100) */
+  .hero{ padding-bottom: calc(48 * var(--width-multiplier)); }
+  .hero__title{
+    font-size: calc(31 * var(--width-multiplier));
+    line-height: 1;
+    max-width: 100%;
+  }
+  .hero__subtitle{
+    font-size: calc(16 * var(--width-multiplier));
+    line-height: 1.3;
+  }
+  .hero__actions{
+    width: 100%;
+    flex-direction: column;
+    gap: calc(16 * var(--width-multiplier));
+  }
+  /* Inspect Button mobile: 358 Fill × 56, padding 12/24, gap 16, radius 100 */
+  .hero__cta{
+    width: 100%;
+    height: calc(56 * var(--width-multiplier));
+    padding: calc(12 * var(--width-multiplier)) calc(24 * var(--width-multiplier));
+    gap: calc(16 * var(--width-multiplier));
+    border-radius: 100px;
+    justify-content: center;
+  }
+
+}
+
+@media (prefers-reduced-motion: reduce){
+  .hero__video{ display: none; }
+}
+
+
+/* ---------- 3.2 «Почему выбирают нас» (.why) ------------------------------
+   cream-фон + орнамент-водяной знак (placeholder), заголовок Forum 64,
+   ряд из 4 фото-карточек (арка сверху) с текстом под фото.
+   Контент-обёртка шире стандартной .container — 1320 (fluid).
+--------------------------------------------------------------------------- */
+.why{
+  position: relative;
+  isolation: isolate;
+  background: var(--color-cream);
+  /* отступ сверху до заголовка по макету (отменяет общее section padding-top) */
+  padding-top: calc(100 * var(--width-multiplier));
+  /* TODO: ask — отступ снизу секции (сейчас 120 по умолчанию section) */
+}
+/* TODO: asset — заменить на pattern-ornament.svg (золотой флёр-узор, тайл). */
+.why__ornament{
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: url(../img/pattern-ornament.svg);
+  background-repeat: repeat;
+  background-position: center;
+}
+.why__container{
+  width: calc(1320 * var(--width-multiplier));
+  max-width: 100%;
+  margin-inline: auto;
+}
+.why__title{
+  margin: 0;
+  font-family: var(--font-family-accent);
+  font-weight: 400;
+  font-size: calc(64 * var(--width-multiplier));
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--color-ink);
+}
+.why__grid{
+  list-style: none;
+  padding: 0;
+  margin: calc(64 * var(--width-multiplier)) 0 0;
+  display: grid;
+  grid-template-columns: repeat(4, calc(312 * var(--width-multiplier)));
+  gap: calc(18 * var(--width-multiplier));
+  justify-content: center;
+}
+.why__card{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.why__photo{
+  display: block;
+  width: calc(312 * var(--width-multiplier));
+  height: calc(426 * var(--width-multiplier));
+  border-radius: 9999px 9999px 0 0;
+  overflow: hidden;
+}
+.why__photo img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.why__text{
+  margin-top: calc(24 * var(--width-multiplier));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(8 * var(--width-multiplier));
+  width: calc(312 * var(--width-multiplier));
+}
+.why__name{
+  margin: 0;
+  font-family: var(--font-family-accent);
+  font-weight: 400;
+  font-size: calc(24 * var(--width-multiplier));
+  line-height: 1;
+  text-align: center;
+  color: var(--color-ink);
+}
+.why__desc{
+  margin: 0;
+  font-family: var(--font-family-base);
+  font-weight: 400;
+  font-size: calc(12 * var(--width-multiplier));
+  line-height: 1.3;
+  letter-spacing: 0;
+  text-align: center;
+  color: var(--color-ink);
+}
+
+
+/* ---------- 3.3 «О комплексе» (.about) ------------------------------------
+   Тёмная секция с центрированным заголовком/подзаголовком и full-bleed
+   рядом из 3 фото. Центральное фото 648 видно полностью; крайние тоже 648,
+   но обрезаются краями вьюпорта через overflow: hidden + flex justify-center.
+   На крайних — тёмный оверлей #000 @ 39%; центральное яркое, без оверлея.
+   Раскладка по top ряда фото = 248 от верха секции:
+     padding-top 100 + title 64 + gap 10 + subtitle 20 + row margin-top 54 = 248
+--------------------------------------------------------------------------- */
+.about{
+  background: var(--color-dark);
+  color: var(--color-cream);
+  padding-top: calc(100 * var(--width-multiplier));
+  /* TODO: ask — отступ снизу секции (сейчас 120 default из section) */
+  overflow: hidden; /* обрезает left/right фото full-bleed-ряда */
+}
+.about__container{
+  text-align: center;
+}
+.about__title{
+  margin: 0;
+  font-family: var(--font-family-accent);
+  font-weight: 400;
+  font-size: calc(64 * var(--width-multiplier));
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--color-cream);
+}
+.about__subtitle{
+  margin: calc(10 * var(--width-multiplier)) 0 0;
+  font-family: var(--font-family-base);
+  font-weight: 400;
+  font-size: calc(20 * var(--width-multiplier));
+  line-height: 1;
+  letter-spacing: 0;
+  text-align: center;
+  color: var(--color-cream);
+}
+.about__row{
+  display: flex;
+  justify-content: center;
+  gap: calc(36 * var(--width-multiplier));
+  height: calc(416 * var(--width-multiplier));
+  margin-top: calc(54 * var(--width-multiplier));
+}
+.about__photo{
+  position: relative;
+  display: block;
+  width: calc(648 * var(--width-multiplier));
+  height: 100%;
+  flex-shrink: 0;
+}
+.about__photo img{
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.about__photo--left::after,
+.about__photo--right::after{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, .39);
+  pointer-events: none;
+}
+
+
+/* ---------- 3.4 «Площадки» (.venues / .venue) — 4.4c: scroll-свитчер ------
+   Дефолт (мобайл / no-JS / reduced-motion): .venues__track — обычный блок,
+   .venue стекаются вертикально, как было в 4.4a/b.
+   Класс .is-switcher вешает JS только на ≥769 + prefers-reduced-motion: no-preference;
+   тогда .venues__track становится 100vh-сценой, а 5 .venue — наложенные слои.
+   Снимаем дефолтный section padding, иначе .venue не возьмёт 820.
+--------------------------------------------------------------------------- */
+.venues{ padding: 0; }
+.venues__track{ position: relative; }
+
+/* активный режим свитчера — включается только из JS (см. main.js, mm 1) */
+.venues.is-switcher .venues__track{ height: 100vh; }
+.venues.is-switcher .venue{
+  position: absolute;
+  inset: 0;
+  height: 100vh;
+  min-height: 0;
+  will-change: transform, opacity;
+}
+
+/* Дефолтная тема .venue = Saltanat/teal. Все цвета и стили дочерних
+   правил тянутся из переменных ниже. Модификаторы .venue--<id> ниже
+   переопределяют ровно эти переменные, не дублируя стили. */
+.venue{
+  --venue-bg: #1F9FB3;
+  --venue-fg: var(--color-cream);
+  --venue-title: var(--venue-fg);
+  --venue-line: rgba(254, 252, 243, .3);
+  --venue-dot: rgba(254, 252, 243, .6);
+  --venue-chip-border: rgba(255, 255, 255, .4);
+  --badge-bg: #fff;
+  --badge-fg: #25A0B2;
+  --badge-orn: #25A0B2;
+  --badge-line: rgba(37, 160, 178, .3);
+  --badge-dot: #25A0B2;
+  --btn-bg: var(--color-cream);
+  --btn-fg: #1F9FB3;
+  --btn-outline-fg: var(--color-cream);
+  --btn-outline-bg: transparent;
+
+  display: flex;
+  min-height: calc(820 * var(--width-multiplier));
+  background: var(--venue-bg);
+  color: var(--venue-fg);
+}
+
+/* ----- темы-модификаторы (TODO: verify против Figma) ----- */
+.venue--aua{
+  --venue-bg: var(--color-gray);
+  --venue-fg: var(--color-ink);
+  --venue-line: rgba(38, 22, 0, .2);
+  --venue-dot: rgba(38, 22, 0, .45);
+  --venue-chip-border: rgba(38, 22, 0, .3);
+  --badge-bg: #fff;
+  --badge-fg: #181818;
+  --badge-orn: #181818;
+  --badge-line: rgba(42, 26, 4, .3);
+  --badge-dot: var(--color-espresso);
+  --btn-bg: var(--color-espresso);
+  --btn-fg: var(--color-cream);
+  --btn-outline-fg: var(--color-ink);
+}
+.venue--night{
+  --venue-bg: var(--color-dark);
+  --venue-fg: var(--color-cream);
+  --venue-line: rgba(254, 252, 243, .25);
+  --venue-dot: rgba(254, 252, 243, .6);
+  --venue-chip-border: rgba(255, 255, 255, .4);
+  /* тёмный бейдж — solid, не rgba (Inspect: #171717) */
+  --badge-bg: #171717;
+  --badge-fg: var(--color-cream);
+  --badge-orn: var(--color-cream);
+  --badge-line: rgba(254, 252, 243, .3);
+  --badge-dot: var(--color-cream);
+  --btn-bg: var(--color-cream);
+  --btn-fg: var(--color-dark);
+  --btn-outline-fg: var(--color-cream);
+}
+.venue--terrace{
+  --venue-bg: var(--color-beige);
+  --venue-fg: var(--color-espresso);
+  --venue-line: rgba(42, 26, 4, .2);
+  --venue-dot: rgba(42, 26, 4, .45);
+  --venue-chip-border: rgba(42, 26, 4, .3);
+  /* Inspect: бейдж beige (#FBF2DE), текст/орнамент/dot — браун #783812 */
+  --badge-bg: #FBF2DE;
+  --badge-fg: #783812;
+  --badge-orn: #783812;
+  --badge-line: rgba(120, 56, 18, .3);
+  --badge-dot: #783812;
+  --btn-bg: var(--color-espresso);
+  --btn-fg: var(--color-cream);
+  --btn-outline-fg: var(--color-espresso);
+}
+.venue--catering{
+  /* Inspect: холодный белый, а не cream */
+  --venue-bg: #FAFEFF;
+  --venue-fg: var(--color-ink);
+  --venue-title: #1F9FB3;
+  --venue-line: rgba(38, 22, 0, .2);
+  --venue-dot: rgba(38, 22, 0, .45);
+  --venue-chip-border: rgba(31, 159, 179, .4);
+  --badge-bg: #fff;
+  --badge-fg: #25A0B2;
+  --badge-orn: #25A0B2;
+  --badge-line: rgba(37, 160, 178, .3);
+  --badge-dot: #25A0B2;
+  --btn-bg: #1F9FB3;
+  --btn-fg: var(--color-cream);
+  --btn-outline-fg: #1F9FB3;
+}
+
+/* ----- левая колонка: текст ----- */
+.venue__panel{
+  flex: 0 0 50%;
+  display: flex;
+  align-items: center;
+  /* TODO: verify — X колонки и вертикальный ритм не сняты;
+     56/100 чтобы контент влез в 820 высоту. */
+  padding: calc(56 * var(--width-multiplier)) calc(100 * var(--width-multiplier));
+}
+.venue__content{
+  width: calc(520 * var(--width-multiplier));
+  display: flex;
+  flex-direction: column;
+  /* TODO: verify — межблочный вертикальный ритм */
+  gap: calc(20 * var(--width-multiplier));
+}
+
+.venue__title{
+  margin: 0;
+  font-family: var(--font-family-accent);
+  font-weight: 400;
+  font-size: calc(64 * var(--width-multiplier));
+  line-height: 1;
+  letter-spacing: 0;
+  color: var(--venue-title);
+}
+.venue__desc{
+  margin: 0;
+  font-family: var(--font-family-base);
+  font-weight: 300;
+  font-size: calc(16 * var(--width-multiplier));
+  /* TODO: verify — Figma Body3=100%, на 4 строки слипается. Поставил 1.4. */
+  line-height: 1.4;
+  letter-spacing: 0;
+  color: var(--venue-fg);
+}
+
+/* ----- разделители -----
+   .venue__divider          сплошная горизонтальная линия 1px
+   .venue__divider--dot     «⎯⎯ • ⎯⎯» — две flex-линии + точка по центру
+                            (раскладка: flex, gap 12; высота даётся точкой) */
+.venue__divider{
+  height: 1px;
+  /* TODO: verify — цвет/прозрачность линии (тянется из --venue-line) */
+  background: var(--venue-line);
+}
+.venue__divider--dot{
+  height: auto;
+  background: none;
+  display: flex;
+  align-items: center;
+  gap: calc(12 * var(--width-multiplier));
+}
+.venue__divider--dot::before,
+.venue__divider--dot::after{
+  content: "";
+  flex: 1 1 auto;
+  height: 1px;
+  background: var(--venue-line);
+}
+.venue__divider--dot span{
+  position: static;
+  transform: none;
+  flex: 0 0 auto;
+  width: calc(6 * var(--width-multiplier));
+  height: calc(6 * var(--width-multiplier));
+  border-radius: 50%;
+  background: var(--venue-dot);
+}
+
+/* ----- подпись «Подходит для» ----- */
+.venue__label{
+  margin: 0;
+  font-family: var(--font-family-base);
+  font-weight: 400;
+  font-size: calc(12 * var(--width-multiplier));
+  line-height: 1.4;
+  letter-spacing: calc(1 * var(--width-multiplier));
+  text-transform: uppercase;
+  color: var(--venue-fg);
+}
+
+/* ----- чипы ----- */
+.venue__chips{
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(8 * var(--width-multiplier));
+}
+/* переопределяем общий .chip под темизацию площадки */
+.venue .chip{
+  border: 1px solid var(--venue-chip-border);
+  border-radius: 9999px;
+  padding: calc(6 * var(--width-multiplier)) calc(12 * var(--width-multiplier));
+  font-family: var(--font-family-base);
+  font-weight: 300;
+  font-size: calc(12 * var(--width-multiplier));
+  line-height: 1.4;
+  letter-spacing: 0;
+  color: var(--venue-fg);
+  background: transparent;
+}
+
+/* ----- аккордеоны (нативный <details>) ----- */
+.venue__acc-head{
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(16 * var(--width-multiplier));
+  font-family: var(--font-family-base);
+  font-weight: 500;                                  /* TODO: verify */
+  font-size: calc(18 * var(--width-multiplier));     /* TODO: verify */
+  color: var(--venue-fg);
+}
+.venue__acc-head::-webkit-details-marker{ display: none; }
+.venue__acc-head::marker{ content: ""; }
+.venue__acc-chevron{
+  flex-shrink: 0;
+  width: calc(16 * var(--width-multiplier));
+  height: calc(16 * var(--width-multiplier));
+  fill: none;
+  stroke: currentColor;
+  transition: transform .3s ease;
+}
+.venue__acc[open] .venue__acc-head .venue__acc-chevron{ transform: rotate(180deg); }
+
+.venue__acc-list{
+  list-style: none;
+  margin: calc(16 * var(--width-multiplier)) 0 0;
+  padding: 0;
+  font-family: var(--font-family-base);
+  font-weight: 300;
+  font-size: calc(12 * var(--width-multiplier));
+  line-height: 1.4;
+  color: var(--venue-fg);
+}
+.venue__acc-list li{
+  position: relative;
+  padding-left: calc(20 * var(--width-multiplier));
+  margin-bottom: calc(10 * var(--width-multiplier));
+}
+.venue__acc-list li::before{
+  content: "—";
+  position: absolute;
+  left: 0;
+}
+.venue__acc-list--cols{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: calc(24 * var(--width-multiplier));
+}
+
+/* ----- кнопки секции ----- */
+.venue__actions{
+  display: flex;
+  gap: calc(16 * var(--width-multiplier));
+}
+
+/* ----- правая колонка: фото + бейдж ----- */
+.venue__media{
+  flex: 0 0 50%;
+  position: relative;
+  overflow: hidden;
+}
+.venue__photo,
+.venue__photo img{
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* затемняющий оверлей на фото — 20% чёрного */
+.venue__media::after{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, .20);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* бейдж — поверх оверлея, на правом краю */
+.venue__badge{
+  position: absolute;
+  z-index: 2;
+  top: calc(240 * var(--width-multiplier));
+  right: 0;
+  width: calc(195 * var(--width-multiplier));
+  padding: calc(32 * var(--width-multiplier));
+  background: var(--badge-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(8 * var(--width-multiplier));
+}
+/* Орнамент — пустой <span>, форма приходит из CSS-маски, цвет — из --badge-orn.
+   В svg уже зашит fill-opacity ~0.3, маска идёт по альфе → визуально получаем
+   ~30% от --badge-orn. Если выйдет слишком бледно/ярко — добавим opacity. */
+.venue__badge-orn{
+  display: block;
+  width: calc(50 * var(--width-multiplier));
+  height: calc(50 * var(--width-multiplier));
+  background-color: var(--badge-orn);
+  -webkit-mask: url("../img/ornament-flourish.svg") center / contain no-repeat;
+          mask: url("../img/ornament-flourish.svg") center / contain no-repeat;
+}
+.venue__badge-orn--flip{ transform: scaleY(-1); }
+.venue__badge-text{
+  margin: 0;
+  width: 100%;
+  font-family: var(--font-family-accent);
+  font-weight: 400;
+  font-size: calc(20 * var(--width-multiplier));
+  line-height: 1.25;
+  letter-spacing: 0;
+  text-align: center;
+  color: var(--badge-fg);
+}
+/* divider внутри бейджа — flex-модель из --dot, но цвета — из badge-* темы.
+   width: 100% — чтобы линии растянулись на всю внутреннюю ширину бейджа
+   (внутри flex-column с align-items: center шrink-wrap'нул бы до 0). */
+.venue__badge-div{ width: 100%; }
+.venue__badge-div::before,
+.venue__badge-div::after{ background: var(--badge-line); }
+.venue__badge-div span{ background: var(--badge-dot); }
+
+/* ----- блок-«примечание» (Aua: ФОРМАТ, Catering: ЭКСКЛЮЗИВ) -----
+   Уппер-лейбл + абзац, для секций где нет аккордеонов. */
+.venue__note{
+  display: flex;
+  flex-direction: column;
+  gap: calc(8 * var(--width-multiplier));
+}
+.venue__note-label{
+  margin: 0;
+  font-family: var(--font-family-base);
+  font-weight: 400;
+  font-size: calc(12 * var(--width-multiplier));
+  line-height: 1.4;
+  letter-spacing: calc(1 * var(--width-multiplier));
+  text-transform: uppercase;
+  color: var(--venue-fg);
+}
+.venue__note-text{
+  margin: 0;
+  font-family: var(--font-family-base);
+  font-weight: 300;
+  font-size: calc(16 * var(--width-multiplier));
+  line-height: 1.4;
+  color: var(--venue-fg);
+}
+
+/* ----- 3.4.m мобильная раскладка карточки .venue (≤768.98) --------------
+   На десктопе .venue — split 50/50 (panel слева, media справа).
+   На мобайле макет переворачивает: фото+бейдж сверху → панель → чипы wrap
+   → аккордеоны → кнопки в столбик. Свитчер тут не работает (matchMedia
+   из main.js не зайдёт), поэтому переопределяем именно «бумажную» вёрстку.
+------------------------------------------------------------------------ */
+@media (width <= 768.98px){
+  .venue{
+    flex-direction: column;
+    min-height: 0;
+    height: auto;
+  }
+  .venue__media{
+    order: -1; /* media идёт после panel в DOM — поднимаем над панелью */
+    flex: none;
+    width: 100%;
+    height: calc(420 * var(--width-multiplier)); /* TODO: verify по 390-артборду */
+  }
+  .venue__panel{
+    flex: none;
+    width: 100%;
+    /* TODO: verify паддинги мобильной панели */
+    padding: calc(28 * var(--width-multiplier)) calc(20 * var(--width-multiplier));
+  }
+  .venue__content{
+    width: 100%;
+    gap: calc(16 * var(--width-multiplier)); /* TODO: verify вертикальный ритм */
+  }
+
+  /* типографика — TODO: verify по 390-артборду */
+  .venue__title{ font-size: calc(40 * var(--width-multiplier)); }
+  .venue__desc{  font-size: calc(14 * var(--width-multiplier)); }
+  .venue__acc-head{ font-size: calc(16 * var(--width-multiplier)); }
+  /* chips / label / acc-list оставляем 12 — как на десктопе */
+
+  /* кнопки в столбик, каждая на всю ширину */
+  .venue__actions{ flex-direction: column; }
+  .venue .btn{ width: 100%; justify-content: center; }
+
+  /* бейдж — по центру нижней части фото */
+  .venue__badge{
+    top: auto;
+    bottom: calc(24 * var(--width-multiplier)); /* TODO: verify */
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: calc(240 * var(--width-multiplier)); /* TODO: verify */
+  }
+}
+
+
+/* =========================================================================
+   3.5 «Для каких мероприятий» (.events) — cream-фон, заголовок H1,
+       сетка 4×2 (десктоп) / 2×4 (мобайл) line-art иконок с подписями.
+   ========================================================================= */
+.events{
+  background: var(--color-cream);
+  /* top = offset заголовка 100; bottom — TODO: verify */
+  padding: calc(100 * var(--width-multiplier)) 0;
+}
+.events__title{
+  font-family: var(--font-family-accent);
+  font-weight: 400;
+  font-size: calc(64 * var(--width-multiplier));
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--color-ink);
+  /* TODO: verify — gap «заголовок → сетка» */
+  margin: 0 0 calc(64 * var(--width-multiplier));
+}
+.events__grid{
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  /* 4×312 = 1248, по центру, колонки впритык по Inspect-сетке */
+  width: calc(1248 * var(--width-multiplier));
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  column-gap: 0;
+  /* TODO: verify — row-gap между рядами 4×2 */
+  row-gap: calc(48 * var(--width-multiplier));
+}
+.events__item{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* gap иконка→подпись (Inspect: 16) */
+  gap: calc(16 * var(--width-multiplier));
+}
+.events__icon{
+  width: 100%;
+  /* 248 hug − 16 gap − 32 label = 200 */
+  height: calc(200 * var(--width-multiplier));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.events__icon img{
+  display: block;
+  max-width: calc(200 * var(--width-multiplier));
+  max-height: 100%;
+  width: auto;
+  height: auto;
+}
+.events__label{
+  font-family: var(--font-family-accent);
+  font-weight: 400;
+  /* Inspect H4: 32 / lh100% / center */
+  font-size: calc(32 * var(--width-multiplier));
+  line-height: 1;
+  text-align: center;
+  color: var(--color-ink);
+}
+
+@media (width <= 768.98px){
+  .events__title{
+    font-size: calc(40 * var(--width-multiplier));
+    margin-bottom: calc(32 * var(--width-multiplier));
+  }
+  .events__grid{
+    width: 100%;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: calc(16 * var(--width-multiplier));
+    row-gap: calc(32 * var(--width-multiplier));
+    padding: 0 calc(16 * var(--width-multiplier));
+  }
+  .events__icon{ height: calc(120 * var(--width-multiplier)); }
+  .events__icon img{ max-width: calc(120 * var(--width-multiplier)); }
+  /* «Корпоративы» в 32w не влезает в колонку (≈150px на 390-арт) → уменьшаем */
+  .events__label{
+    font-size: calc(20 * var(--width-multiplier));
+    word-break: keep-all;
+  }
+  .events__item{ gap: calc(8 * var(--width-multiplier)); }
+}
+
+
+/* =========================================================================
+   3.6 «Галерея Атмосферы» (.gallery) — структура та же, что .about:
+       центрированный H1 + full-bleed ряд из 3 фото с тёмным оверлеем
+       на крайних. Отличия от .about: cream фон, тёмный заголовок, нет
+       сабтайтла, нет нижнего padding (контакты сразу за галереей).
+   ========================================================================= */
+.gallery{
+  background: var(--color-cream);
+  padding-top: calc(100 * var(--width-multiplier));
+  /* TODO: verify — отступ снизу галереи перед .contacts */
+  padding-bottom: calc(100 * var(--width-multiplier));
+  overflow: hidden; /* обрезает left/right фото full-bleed-ряда */
+}
+.gallery__container{
+  text-align: center;
+}
+.gallery__title{
+  margin: 0;
+  font-family: var(--font-family-accent);
+  font-weight: 400;
+  font-size: calc(64 * var(--width-multiplier));
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--color-ink);
+}
+.gallery__row{
+  display: flex;
+  justify-content: center;
+  gap: calc(36 * var(--width-multiplier));
+  height: calc(416 * var(--width-multiplier));
+  /* TODO: verify — gap «заголовок → ряд» */
+  margin-top: calc(54 * var(--width-multiplier));
+}
+.gallery__photo{
+  position: relative;
+  display: block;
+  width: calc(648 * var(--width-multiplier));
+  height: 100%;
+  flex-shrink: 0;
+}
+.gallery__photo img{
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.gallery__photo--left::after,
+.gallery__photo--right::after{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, .39);
+  pointer-events: none;
+}
+
+@media (width <= 768.98px){
+  .gallery__title{ font-size: calc(40 * var(--width-multiplier)); }
+  .gallery__row{
+    height: calc(220 * var(--width-multiplier));
+    gap: calc(12 * var(--width-multiplier));
+    margin-top: calc(32 * var(--width-multiplier));
+  }
+  .gallery__photo{ width: calc(260 * var(--width-multiplier)); }
+}
+
+
+/* =========================================================================
+   3.7 «Контакты» + «Как нас найти» (.contacts) — тёмная секция #181818,
+       одна Figma-рамка 1440×1484. Слева текст+соцсети, справа конверт
+       с белой карточкой-формой. Под ними full-bleed карта 1320×500.
+   ========================================================================= */
+.contacts{
+  background: #181818;
+  color: var(--color-cream);
+  /* TODO: verify — вертикальный padding секции */
+  padding: calc(120 * var(--width-multiplier)) 0;
+}
+
+.contacts__top{
+  /* Inspect: контент-ширина = ширине карты ниже = 1320 */
+  width: calc(1320 * var(--width-multiplier));
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  /* TODO: verify — gap между левой колонкой и конвертом */
+  gap: calc(80 * var(--width-multiplier));
+}
+
+/* ---- левая колонка: info ---- */
+.contacts__info{
+  /* Inspect: Container 536 Fill × 454 Hug, vertical, gap 32 */
+  flex: 0 0 auto;
+  width: calc(536 * var(--width-multiplier));
+  display: flex;
+  flex-direction: column;
+  gap: calc(32 * var(--width-multiplier));
+}
+.contacts__intro{
+  display: flex;
+  flex-direction: column;
+  /* gap title→lead — TODO: verify (на скрине ~12-16) */
+  gap: calc(16 * var(--width-multiplier));
+}
+.contacts__title{
+  margin: 0;
+  font-family: var(--font-family-accent);
+  font-weight: 400;
+  /* Inspect: H1 Forum 400 64px lh 100% Uppercase */
+  font-size: calc(64 * var(--width-multiplier));
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--color-cream);
+}
+.contacts__lead{
+  margin: 0;
+  font-family: var(--font-family-base);
+  /* Inspect: Body2 Montserrat 400 16px lh 100% */
+  font-weight: 400;
+  font-size: calc(16 * var(--width-multiplier));
+  line-height: 1.25; /* TODO: verify — 100% в Inspect, чуть «слипается» на 2 строках */
+  color: var(--color-cream);
+}
+
+.contacts__list{
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  /* Inspect: каждая ContactRow Fill 536 × Hug 76, padding top/bottom 16, gap 8, border-bottom 1px #FEFCF3 40% */
+}
+.contacts__item{
+  display: flex;
+  flex-direction: column;
+  gap: calc(8 * var(--width-multiplier));
+  padding: calc(16 * var(--width-multiplier)) 0;
+  border-bottom: 1px solid rgba(254, 252, 243, .4);
+}
+.contacts__label{
+  font-family: var(--font-family-base);
+  /* Inspect: Montserrat 300 Light, 12px, lh 100%, Uppercase, #FEFCF3 */
+  font-weight: 300;
+  font-size: calc(12 * var(--width-multiplier));
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--color-cream);
+}
+.contacts__value{
+  font-family: var(--font-family-base);
+  /* Inspect: Body2 Montserrat 400 16px lh 100% */
+  font-weight: 400;
+  font-size: calc(16 * var(--width-multiplier));
+  line-height: 1;
+  color: var(--color-cream);
+  text-decoration: none;
+}
+
+/* ---- соцсети: круглая обводка cream 1px, 50×50 (Inspect Container) ---- */
+.contacts__socials{
+  display: flex;
+  /* TODO: verify — gap между кружками */
+  gap: calc(12 * var(--width-multiplier));
+}
+.contacts__social{
+  display: inline-flex;
+  width: calc(50 * var(--width-multiplier));
+  height: calc(50 * var(--width-multiplier));
+  /* Готовые SVG с border-circle + icon уже включают рамку, так что свой border не нужен */
+}
+.contacts__social img{
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---- правая колонка: конверт-обёртка ---- */
+.contacts__form-wrap{
+  position: relative;
+  /* overflow:hidden клипает любой вылет карточки за силуэт конверта при анимации */
+  overflow: hidden;
+  flex: 0 0 auto;
+  /* Inspect: envelope-иллюстрация 581.43 × 600 */
+  width: calc(581 * var(--width-multiplier));
+  height: calc(600 * var(--width-multiplier));
+  /* Опускаем блок-конверт ниже относительно info-колонки —
+     визуально центрирует envelope против info по Figma. */
+  margin-top: calc(80 * var(--width-multiplier));
+}
+/* Конверт = back (сзади формы) + front (поверх формы внизу).
+   Обе картинки заполняют всю обёртку 581×600. Между ними сидит form-card. */
+.contacts__envelope{
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+.contacts__envelope--back{ z-index: 0; }
+.contacts__envelope--front{ z-index: 2; }
+
+/* Лого SALTANAT SARAIY на передней крышке конверта.
+   Inspect: 188.24 × 100, лежит на центре front-кармана.
+   z-index: 4 — поверх front(2) и form-card(3), но визуально не пересекается с формой. */
+.contacts__logo{
+  position: absolute;
+  z-index: 4;
+  top:  calc(458 * var(--width-multiplier));
+  left: calc(196 * var(--width-multiplier)); /* (581 - 188) / 2 = 196.5 — центр по горизонтали */
+  width:  calc(188 * var(--width-multiplier));
+  height: calc(100 * var(--width-multiplier));
+  display: block;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+/* Кремовый «лист»-фон. Сидит МЕЖДУ back(0) и front(2) — низ листа уходит
+   за карман-крышку (визуальный эффект «письмо в конверте»). */
+.contacts__letter{
+  position: absolute;
+  z-index: 1;
+  top:  calc(42 * var(--width-multiplier));
+  left: calc(53.5 * var(--width-multiplier));
+  width:  calc(474 * var(--width-multiplier));
+  height: calc(456 * var(--width-multiplier));
+  background: #FEFCF3;
+}
+
+.contacts__form-card{
+  /* Inspect: form-card 474 × 456, Top 42, padding 52. Центрируем через left:calc
+     (без transform), чтобы GSAP-анимация не конфликтовала.
+     ВАЖНО: карточка тут — ПРОЗРАЧНЫЙ контент-контейнер ПОВЕРХ front (z:3).
+     Кремовый фон даёт отдельный .contacts__letter (z:1), который остаётся
+     под front-карманом. Так контент всегда читаем, а низ листа всё равно
+     закрыт карманом. */
+  position: absolute;
+  z-index: 3; /* выше front(2) */
+  left: calc(53.5 * var(--width-multiplier));
+  top: calc(42 * var(--width-multiplier));
+  width: calc(474 * var(--width-multiplier));
+  height: calc(456 * var(--width-multiplier));
+  background: transparent;
+  padding: calc(52 * var(--width-multiplier));
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  /* Inspect "заявка" container: gap 32 (между title и формой) */
+  gap: calc(32 * var(--width-multiplier));
+}
+.contacts__form-title{
+  margin: 0;
+  font-family: var(--font-family-accent);
+  font-weight: 400;
+  /* TODO: verify — Inspect не зафиксирован для form-title, на глаз ~28-32 */
+  font-size: calc(32 * var(--width-multiplier));
+  line-height: 1;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--color-ink);
+}
+.contacts__form{
+  display: flex;
+  flex-direction: column;
+  /* TODO: verify — gap между полями и кнопкой */
+  gap: calc(16 * var(--width-multiplier));
+}
+.contacts__field{
+  width: 100%;
+  /* TODO: verify — высота поля */
+  height: calc(56 * var(--width-multiplier));
+  padding: 0 calc(16 * var(--width-multiplier));
+  /* TODO: verify — оттенок бордера */
+  border: 1px solid rgba(24, 24, 24, .2);
+  border-radius: 0; /* поля прямоугольные по Figma */
+  font-family: var(--font-family-base);
+  font-size: calc(14 * var(--width-multiplier));
+  color: var(--color-ink);
+  background: #FEFCF3;
+}
+.contacts__field::placeholder{
+  color: rgba(24, 24, 24, .4); /* TODO: verify */
+}
+.contacts__field:focus-visible{
+  outline: 1px solid var(--color-ink);
+  outline-offset: 0;
+}
+.contacts__submit{
+  /* Тёмная pill со стрелкой, на белой карточке */
+  --btn-bg: #181818;
+  --btn-fg: var(--color-cream);
+  align-self: center;
+  margin-top: calc(8 * var(--width-multiplier));
+}
+
+/* ---- 4.8 «Как нас найти» — full-bleed карта 1320×500 ---- */
+.contacts__findus{
+  width: calc(1320 * var(--width-multiplier));
+  /* TODO: verify — отступ от верхнего блока (top contacts → findus) */
+  margin: calc(120 * var(--width-multiplier)) auto 0;
+}
+.contacts__findus-heading{
+  display: flex;
+  flex-direction: column;
+  /* Inspect: Heading container gap 8 (title→lead) */
+  gap: calc(8 * var(--width-multiplier));
+  /* TODO: verify — отступ heading → карта */
+  margin-bottom: calc(32 * var(--width-multiplier));
+}
+.contacts__findus-title{
+  margin: 0;
+  font-family: var(--font-family-accent);
+  font-weight: 400;
+  /* Inspect: H3 Forum 400 32px lh 100% Uppercase */
+  font-size: calc(32 * var(--width-multiplier));
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--color-cream);
+}
+.contacts__findus-lead{
+  margin: 0;
+  font-family: var(--font-family-base);
+  /* Inspect: Body2 Montserrat 400 16px lh 100% */
+  font-weight: 400;
+  font-size: calc(16 * var(--width-multiplier));
+  line-height: 1;
+  color: var(--color-cream);
+}
+.contacts__map{ width: 100%; }
+.contacts__map img{
+  display: block;
+  width: 100%;
+  /* Inspect: 1320 × 500 Crop */
+  height: calc(500 * var(--width-multiplier));
+  object-fit: cover;
+}
+
+/* ---- мобайл (≤768.98) — базовый fallback; точный мобильный макет ещё не снят с Figma ---- */
+@media (width <= 768.98px){
+  .contacts{ padding: calc(64 * var(--width-multiplier)) 0; }
+  .contacts__top{
+    width: 100%;
+    flex-direction: column;
+    gap: calc(40 * var(--width-multiplier));
+    padding: 0 calc(16 * var(--width-multiplier));
+  }
+  .contacts__info,
+  .contacts__form-wrap{ width: 100%; margin-top: 0; }
+  .contacts__title{ font-size: calc(40 * var(--width-multiplier)); }
+  .contacts__form-wrap{
+    /* поддерживаем пропорцию конверта 581:600 на мобиле */
+    aspect-ratio: 581 / 600;
+    height: auto;
+  }
+  /* На мобиле wrap = 100% viewport. SVG back включает V-крышку сверху
+     (она занимает y=0..255 / 600 ≈ верхние 42% wrap). Чтобы letter
+     не закрывала V-крышку и сидела в «окне» открытого конверта —
+     опускаем top, уменьшаем высоту, чуть сжимаем по ширине. */
+  .contacts__letter,
+  .contacts__form-card{
+    top: 18%;          /* было 7% — слишком высоко, перекрывало V-крышку */
+    left: 12%;
+    width: 76%;
+    height: 58%;       /* было 76% — слишком большая, заходила за карман */
+  }
+  .contacts__form-card{
+    /* паддинги тоже в процентах от ширины wrap */
+    padding: 8% 8%;
+    gap: calc(16 * var(--width-multiplier));
+  }
+  /* Лого на мобиле — в процентах от wrap (581×600).
+     188/581 ≈ 32.4% ширины, 100/600 ≈ 16.7% высоты,
+     top 458/600 ≈ 76.3%, left (581-188)/2/581 ≈ 33.8%. */
+  .contacts__logo{
+    top:  76.3%;
+    left: 33.8%;
+    width:  32.4%;
+    height: 16.7%;
+  }
+  .contacts__form-title{ font-size: calc(24 * var(--width-multiplier)); }
+  .contacts__form{ gap: calc(12 * var(--width-multiplier)); }
+  .contacts__field{ height: calc(48 * var(--width-multiplier)); }
+  .contacts__findus{
+    width: 100%;
+    padding: 0 calc(16 * var(--width-multiplier));
+    margin-top: calc(48 * var(--width-multiplier));
+  }
+  .contacts__map img{ height: calc(280 * var(--width-multiplier)); }
+}
+
+
+/* =========================================================================
+   4. Страницы thx.html / 404.html (шаг 4)
+   ========================================================================= */
+/* TODO: .thx, .not-found */
+
+
+/* =========================================================================
+   5. Адаптив — консолидированный mobile-патч (≤768.98).
+      Здесь живут только мобильные оверрайды, которые ДОЛЖНЫ идти
+      ПОСЛЕ всех десктопных секционных правил, иначе source-order
+      делает их бессильными.
+   ========================================================================= */
+@media (width <= 768.98px){
+
+  /* ---- HERO — затемнение по Inspect: нижние 510 на 390-артборде,
+     gradient прозрачный сверху → чёрный снизу. На десктопе остаётся
+     старый плоский .5-overlay (читаемость на видеофоне). */
+  .hero__overlay{
+    inset: auto 0 0 0;
+    height: calc(510 * var(--width-multiplier));
+    background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 100%);
+  }
+
+  /* ---- WHY (4-col → 1-col stack) */
+  .why__title{
+    font-size: calc(40 * var(--width-multiplier));
+  }
+  .why__grid{
+    grid-template-columns: 1fr;
+    margin-top: calc(32 * var(--width-multiplier));
+    gap: calc(24 * var(--width-multiplier));
+  }
+  .why__photo{
+    width: 100%;
+    aspect-ratio: 312 / 426;
+  }
+
+  /* ---- ABOUT (3 фото full-bleed уменьшены + тайтлы сжаты) */
+  .about__title{
+    font-size: calc(40 * var(--width-multiplier));
+  }
+  .about__subtitle{
+    font-size: calc(14 * var(--width-multiplier));
+    line-height: 1.3;
+  }
+  .about__row{
+    height: calc(220 * var(--width-multiplier));
+    gap: calc(12 * var(--width-multiplier));
+    margin-top: calc(32 * var(--width-multiplier));
+  }
+  .about__photo{
+    width: calc(280 * var(--width-multiplier));
+  }
+}
