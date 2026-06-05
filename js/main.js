@@ -181,6 +181,46 @@
     });
   }
 
+  document.querySelectorAll('details.venue__acc').forEach((d) => {
+    const summary = d.querySelector('summary');
+    const content = d.querySelector('.venue__acc-list');
+    if (!summary || !content) return;
+
+    const DUR = 380;
+    let anim = null;
+
+    summary.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (anim) {
+        anim.cancel();
+        anim = null;
+      }
+
+      const isOpen = d.open;
+      if (!isOpen) d.open = true;
+
+      const fullH = content.scrollHeight;
+      const fromH = isOpen ? fullH : 0;
+      const toH   = isOpen ? 0 : fullH;
+
+      content.style.overflow = 'hidden';
+
+      anim = content.animate(
+        [
+          { height: fromH + 'px', opacity: isOpen ? 1 : 0 },
+          { height: toH   + 'px', opacity: isOpen ? 0 : 1 },
+        ],
+        { duration: DUR, easing: 'cubic-bezier(.22,.61,.36,1)' }
+      );
+
+      anim.onfinish = () => {
+        content.style.overflow = '';
+        if (isOpen) d.open = false;
+        anim = null;
+      };
+    });
+  });
+
   document.querySelectorAll('.about__row, .gallery__row').forEach((row) => {
     let down = false, startX = 0, startScroll = 0, moved = 0;
     row.addEventListener('pointerdown', (e) => {
