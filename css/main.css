@@ -863,6 +863,9 @@ body{ overflow-x: clip; }
 
   padding: calc(56 * var(--width-multiplier)) calc(100 * var(--width-multiplier));
 }
+/* panels with accordions: top-align so opening/closing doesn't re-centre
+   the whole block (otherwise the title jumps up/down) */
+.venue__panel:has(.venue__acc){ align-items: flex-start; }
 .venue__content{
   width: calc(520 * var(--width-multiplier));
   display: flex;
@@ -979,8 +982,8 @@ body{ overflow-x: clip; }
 
 .venue__acc-list{
   list-style: none;
-  margin: calc(16 * var(--width-multiplier)) 0 0;
-  padding: 0;
+  margin: 0;
+  padding: calc(16 * var(--width-multiplier)) 0 0;
   font-family: var(--font-family-base);
   font-weight: 300;
   font-size: calc(12 * var(--width-multiplier));
