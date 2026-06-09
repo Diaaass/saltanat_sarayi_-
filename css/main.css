@@ -722,7 +722,7 @@ body{ overflow-x: clip; }
   margin-top: calc(54 * var(--width-multiplier));
   overflow-x: auto;
   overflow-y: hidden;
-  scroll-snap-type: x mandatory;
+  scroll-snap-type: x proximity;
   scroll-behavior: smooth;
   scrollbar-width: none;
   padding-inline: calc(60 * var(--width-multiplier));
@@ -1258,7 +1258,7 @@ body{ overflow-x: clip; }
   margin-top: calc(54 * var(--width-multiplier));
   overflow-x: auto;
   overflow-y: hidden;
-  scroll-snap-type: x mandatory;
+  scroll-snap-type: x proximity;
   scroll-behavior: smooth;
   scrollbar-width: none;
   padding-inline: calc(60 * var(--width-multiplier));
