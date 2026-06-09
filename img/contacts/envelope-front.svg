@@ -1,0 +1,56 @@
+<svg width="582" height="600" viewBox="0 0 582 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M581.431 599.999H283.172L295.938 454.048C295.938 427.985 465.358 308.309 541.102 262.282C561.921 249.631 581.43 251.903 581.431 251.903V599.999Z" fill="#D7BB93"/>
+<path d="M581.431 599.999H283.172L295.938 454.048C295.938 427.985 465.358 308.309 541.102 262.282C561.921 249.631 581.43 251.903 581.431 251.903V599.999Z" fill="url(#paint2_linear_39_1949)" style="mix-blend-mode:screen"/>
+<path d="M0 599.999H298.259L285.493 454.048C285.493 427.985 116.073 308.309 40.3287 262.282C19.5099 249.631 0 251.903 0 251.903V599.999Z" fill="#D7BB93"/>
+<path d="M0 599.999H298.259L285.493 454.048C285.493 427.985 116.073 308.309 40.3287 262.282C19.5099 249.631 0 251.903 0 251.903V599.999Z" fill="url(#paint3_linear_39_1949)" style="mix-blend-mode:multiply"/>
+<path d="M581.431 600H0L217.357 385.36C224.392 378.738 233.444 374.663 243.068 373.809C269.43 371.47 316.671 371.355 340.135 373.708C346.717 374.368 352.915 377.109 357.822 381.546L581.431 600Z" fill="#D7BB93"/>
+<path opacity="0.13" d="M581.431 600H0L217.357 385.36C224.392 378.738 233.444 374.663 243.068 373.809C269.43 371.47 316.671 371.355 340.135 373.708C346.717 374.368 352.915 377.109 357.822 381.546L581.431 600Z" fill="url(#paint4_linear_39_1949)" style="mix-blend-mode:multiply"/>
+<path d="M581.431 600H0L217.357 385.36C224.392 378.738 233.444 374.663 243.068 373.809C269.43 371.47 316.671 371.355 340.135 373.708C346.717 374.368 352.915 377.109 357.822 381.546L581.431 600Z" fill="url(#paint5_linear_39_1949)" style="mix-blend-mode:screen"/>
+<path d="M581.431 600H0L217.357 385.36C224.392 378.738 233.444 374.663 243.068 373.809C269.43 371.47 316.671 371.355 340.135 373.708C346.717 374.368 352.915 377.109 357.822 381.546L581.431 600Z" fill="url(#paint6_linear_39_1949)" style="mix-blend-mode:screen"/>
+<defs>
+<linearGradient id="paint2_linear_39_1949" x1="454.925" y1="457.937" x2="387.614" y2="362.772" gradientUnits="userSpaceOnUse">
+<stop offset="0.767"/>
+<stop offset="0.858" stop-color="#020202"/>
+<stop offset="0.908" stop-color="#0A0A0A"/>
+<stop offset="0.948" stop-color="#181818"/>
+<stop offset="0.983" stop-color="#2B2B2B"/>
+<stop offset="0.993" stop-color="#333333"/>
+</linearGradient>
+<linearGradient id="paint3_linear_39_1949" x1="39.6687" y1="410.916" x2="118.152" y2="497.068" gradientUnits="userSpaceOnUse">
+<stop offset="0.692" stop-color="#F2F2F2"/>
+<stop offset="0.819" stop-color="#F0F0F0"/>
+<stop offset="0.868" stop-color="#EBEAE9"/>
+<stop offset="0.903" stop-color="#E3DFDD"/>
+<stop offset="0.931" stop-color="#D6D1CC"/>
+<stop offset="0.956" stop-color="#C7BDB5"/>
+<stop offset="0.978" stop-color="#B3A69A"/>
+<stop offset="0.997" stop-color="#9C8A7A"/>
+<stop offset="1" stop-color="#998675"/>
+</linearGradient>
+<linearGradient id="paint4_linear_39_1949" x1="290.716" y1="600" x2="290.716" y2="371.998" gradientUnits="userSpaceOnUse">
+<stop offset="0.014" stop-color="#998675"/>
+<stop offset="0.08" stop-color="#C7B299"/>
+<stop offset="0.084" stop-color="#C8B49C"/>
+<stop offset="0.122" stop-color="#D5C7B6"/>
+<stop offset="0.166" stop-color="#DFD7CC"/>
+<stop offset="0.217" stop-color="#E8E3DD"/>
+<stop offset="0.281" stop-color="#EDEBE9"/>
+<stop offset="0.37" stop-color="#F1F0F0"/>
+<stop offset="0.617" stop-color="#F2F2F2"/>
+</linearGradient>
+<linearGradient id="paint5_linear_39_1949" x1="288.515" y1="596.898" x2="142.288" y2="455.312" gradientUnits="userSpaceOnUse">
+<stop offset="0.816"/>
+<stop offset="0.902" stop-color="#020202"/>
+<stop offset="0.949" stop-color="#0A0A0A"/>
+<stop offset="0.987" stop-color="#181818"/>
+<stop offset="0.991" stop-color="#1A1A1A"/>
+</linearGradient>
+<linearGradient id="paint6_linear_39_1949" x1="322.074" y1="568.642" x2="434.666" y2="456.05" gradientUnits="userSpaceOnUse">
+<stop offset="0.915"/>
+<stop offset="0.952" stop-color="#020202"/>
+<stop offset="0.973" stop-color="#0A0A0A"/>
+<stop offset="0.989" stop-color="#181818"/>
+<stop offset="0.991" stop-color="#1A1A1A"/>
+</linearGradient>
+</defs>
+</svg>

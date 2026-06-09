@@ -78,10 +78,54 @@
     }
   });
 
+  // --- Phone field: light validation only (type freely, no mask) ------------
+  const phoneDigits = (value) => String(value).replace(/\D/g, '');
+  const isValidPhone = (value) => phoneDigits(value).length >= 10;
+
+  const setFieldError = (input, message) => {
+    input.classList.add('is-invalid');
+    input.setAttribute('aria-invalid', 'true');
+    let err = input.nextElementSibling;
+    if (!(err && err.classList && err.classList.contains('field-error'))) {
+      err = document.createElement('span');
+      err.className = 'field-error';
+      input.insertAdjacentElement('afterend', err);
+    }
+    err.textContent = message;
+  };
+  const clearFieldError = (input) => {
+    input.classList.remove('is-invalid');
+    input.removeAttribute('aria-invalid');
+    const err = input.nextElementSibling;
+    if (err && err.classList && err.classList.contains('field-error')) err.remove();
+  };
+
+  const validateForm = (form) => {
+    let ok = true;
+    const name = form.querySelector('input[name="name"]');
+    const phone = form.querySelector('input[name="phone"]');
+    if (name) {
+      if (!name.value.trim()) { setFieldError(name, 'Введите имя'); ok = false; }
+      else clearFieldError(name);
+      name.addEventListener('input', () => { if (name.value.trim()) clearFieldError(name); }, { once: true });
+    }
+    if (phone) {
+      if (!isValidPhone(phone.value)) { setFieldError(phone, 'Введите номер полностью'); ok = false; }
+      else clearFieldError(phone);
+    }
+    return ok;
+  };
+
   document.addEventListener('submit', (e) => {
     const form = e.target.closest('[data-modal-form]');
     if (!form) return;
     e.preventDefault();
+
+    if (!validateForm(form)) {
+      const firstInvalid = form.querySelector('.is-invalid');
+      if (firstInvalid) firstInvalid.focus();
+      return;
+    }
 
     window.location.href = 'thx.html';
   });
@@ -134,9 +178,10 @@
     motionQuery.addEventListener('change', applyReducedMotion);
   }
 
-  if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
-    gsap.registerPlugin(ScrollTrigger);
+  const hasGsap = typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined';
+  if (hasGsap) gsap.registerPlugin(ScrollTrigger);
 
+  if (hasGsap) {
     const mm = gsap.matchMedia();
     mm.add('(min-width: 769px) and (prefers-reduced-motion: no-preference)', () => {
       const section = document.querySelector('.venues');
@@ -256,11 +301,23 @@
       e.preventDefault();
       row.scrollLeft += e.deltaY;
     }, { passive: false });
+
+    // open the carousel on the second card instead of the first
+    const showSecond = () => {
+      const target = row.children[1];
+      if (!target) return;
+      const rowRect = row.getBoundingClientRect();
+      const tRect = target.getBoundingClientRect();
+      row.scrollBy({
+        left: (tRect.left + tRect.width / 2) - (rowRect.left + rowRect.width / 2),
+        behavior: 'auto',
+      });
+    };
+    showSecond();
+    window.addEventListener('load', showSecond);
   });
 
-  if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
-    gsap.registerPlugin(ScrollTrigger);
-
+  if (hasGsap) {
     const mmContacts = gsap.matchMedia();
     mmContacts.add('(prefers-reduced-motion: no-preference)', () => {
       const wrap = document.querySelector('.contacts__form-wrap');
