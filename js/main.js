@@ -78,9 +78,22 @@
     }
   });
 
-  // --- Phone field: light validation only (type freely, no mask) ------------
+  // --- Phone field: allow only phone chars (no letters), no reformatting ----
   const phoneDigits = (value) => String(value).replace(/\D/g, '');
   const isValidPhone = (value) => phoneDigits(value).length >= 10;
+
+  document.querySelectorAll('[data-modal-form] input[type="tel"]').forEach((input) => {
+    input.addEventListener('input', () => {
+      const clean = input.value.replace(/[^\d+()\-\s]/g, '');
+      if (clean !== input.value) {
+        const removed = input.value.length - clean.length;
+        const pos = Math.max(0, (input.selectionStart || clean.length) - removed);
+        input.value = clean;
+        input.setSelectionRange(pos, pos);
+      }
+      if (input.classList.contains('is-invalid') && isValidPhone(input.value)) clearFieldError(input);
+    });
+  });
 
   const setFieldError = (input, message) => {
     input.classList.add('is-invalid');
