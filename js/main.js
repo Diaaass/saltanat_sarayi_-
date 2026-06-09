@@ -183,7 +183,7 @@
 
   if (hasGsap) {
     const mm = gsap.matchMedia();
-    mm.add('(min-width: 769px) and (prefers-reduced-motion: no-preference)', () => {
+    mm.add('(min-width: 769px)', () => {
       const section = document.querySelector('.venues');
       const venues = gsap.utils.toArray('.venues .venue');
       const n = venues.length;
