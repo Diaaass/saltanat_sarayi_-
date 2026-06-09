@@ -58,6 +58,9 @@
   white-space: nowrap;
 }
 
+/* clip phantom horizontal overflow (Windows scrollbar + 100vw math);
+   `clip` (not hidden) keeps the window as the scroller so GSAP pin works */
+body{ overflow-x: clip; }
 .page{ position: relative; }
 .header{
   position: relative;
