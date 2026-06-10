@@ -78,21 +78,41 @@
     }
   });
 
-  // --- Phone field: allow only phone chars (no letters), no reformatting ----
+  // --- Phone mask: +7 (___) ___ ____ -------------------------------------
+  const PHONE_MATRIX = '+7 (___) ___ ____';
   const phoneDigits = (value) => String(value).replace(/\D/g, '');
-  const isValidPhone = (value) => phoneDigits(value).length >= 10;
+  const isValidPhone = (value) => phoneDigits(value).length >= 11; // +7 и 10 цифр
 
-  document.querySelectorAll('[data-modal-form] input[type="tel"]').forEach((input) => {
-    input.addEventListener('input', () => {
-      const clean = input.value.replace(/[^\d+()\-\s]/g, '');
-      if (clean !== input.value) {
-        const removed = input.value.length - clean.length;
-        const pos = Math.max(0, (input.selectionStart || clean.length) - removed);
-        input.value = clean;
-        input.setSelectionRange(pos, pos);
-      }
-      if (input.classList.contains('is-invalid') && isValidPhone(input.value)) clearFieldError(input);
-    });
+  const applyPhoneMask = (event) => {
+    const input = event.target;
+
+    let digits = input.value.replace(/\D/g, '');
+    if (digits[0] === '8') digits = '7' + digits.slice(1); // 8 700… → +7 700…
+    if (!digits) digits = '7';                             // код страны всегда впереди
+    if (digits.length > 11) digits = digits.slice(0, 11);
+
+    let i = 0;
+    input.value = PHONE_MATRIX.replace(/./g, (ch) =>
+      /[_\d]/.test(ch) && i < digits.length
+        ? digits.charAt(i++)
+        : (i >= digits.length ? '' : ch)
+    );
+    if (input.value === '+7') input.value = '+7 (';
+
+    if (input.classList.contains('is-invalid') && isValidPhone(input.value)) {
+      clearFieldError(input);
+    }
+  };
+
+  // на blur очищаем поле, если введён только код страны — вернётся placeholder
+  const resetEmptyPhone = (event) => {
+    if (phoneDigits(event.target.value).length <= 1) event.target.value = '';
+  };
+
+  document.querySelectorAll('input[type="tel"]').forEach((input) => {
+    input.addEventListener('focus', applyPhoneMask);
+    input.addEventListener('input', applyPhoneMask);
+    input.addEventListener('blur', resetEmptyPhone);
   });
 
   const setFieldError = (input, message) => {
@@ -177,22 +197,24 @@
     window.addEventListener('scroll', onScroll, { passive: true });
   }
 
-  const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const applyReducedMotion = () => {
-    if (!motionQuery.matches) return;
-    document.querySelectorAll('video[autoplay]').forEach((v) => {
-      v.removeAttribute('autoplay');
-      v.setAttribute('preload', 'none');
-      v.pause();
-    });
-  };
-  applyReducedMotion();
-  if (typeof motionQuery.addEventListener === 'function') {
-    motionQuery.addEventListener('change', applyReducedMotion);
-  }
-
   const hasGsap = typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined';
   if (hasGsap) gsap.registerPlugin(ScrollTrigger);
+
+  // --- Reveal: fade-up + stagger через IntersectionObserver --------------
+  // (смотрит на реальную видимость, поэтому не зависит от пинов и позиций скролла)
+  const revealEls = document.querySelectorAll('[data-reveal], [data-reveal-group]');
+  if (!('IntersectionObserver' in window)) {
+    revealEls.forEach((el) => el.classList.add('is-revealed'));
+  } else {
+    const revealIO = new IntersectionObserver((entries, obs) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-revealed');
+        obs.unobserve(entry.target);
+      });
+    }, { rootMargin: '0px 0px -10% 0px' });
+    revealEls.forEach((el) => revealIO.observe(el));
+  }
 
   if (hasGsap) {
     const mm = gsap.matchMedia();
@@ -279,56 +301,18 @@
     });
   });
 
-  document.querySelectorAll('.about__row, .gallery__row').forEach((row) => {
-    let down = false, startX = 0, startScroll = 0, moved = 0;
-    row.addEventListener('pointerdown', (e) => {
-      if (e.pointerType === 'touch') return;
-      down = true; moved = 0;
-      startX = e.clientX;
-      startScroll = row.scrollLeft;
-      row.classList.add('is-dragging');
-      row.setPointerCapture(e.pointerId);
-    });
-    row.addEventListener('pointermove', (e) => {
-      if (!down) return;
-      const dx = e.clientX - startX;
-      moved = Math.abs(dx);
-      row.scrollLeft = startScroll - dx;
-    });
-    const end = () => {
-      if (!down) return;
-      down = false;
-      row.classList.remove('is-dragging');
-      if (moved > 5) {
-        const click = (ev) => { ev.preventDefault(); ev.stopPropagation(); row.removeEventListener('click', click, true); };
-        row.addEventListener('click', click, true);
-      }
-    };
-    row.addEventListener('pointerup', end);
-    row.addEventListener('pointercancel', end);
-    row.addEventListener('pointerleave', end);
-
-    row.addEventListener('wheel', (e) => {
-      if (e.deltaY === 0 || e.shiftKey) return;
-      if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
-      e.preventDefault();
-      row.scrollLeft += e.deltaY;
-    }, { passive: false });
-
-    // open the carousel on the second card instead of the first
-    const showSecond = () => {
-      const target = row.children[1];
-      if (!target) return;
-      const rowRect = row.getBoundingClientRect();
-      const tRect = target.getBoundingClientRect();
-      row.scrollBy({
-        left: (tRect.left + tRect.width / 2) - (rowRect.left + rowRect.width / 2),
-        behavior: 'auto',
+  if (typeof Swiper !== 'undefined') {
+    document.querySelectorAll('.gallery__swiper, .about__swiper').forEach((el) => {
+      new Swiper(el, {
+        slidesPerView: 'auto',
+        spaceBetween: 12,
+        pagination: { el: el.querySelector('.swiper-pagination'), clickable: true },
+        breakpoints: {
+          769: { spaceBetween: 36 },
+        },
       });
-    };
-    showSecond();
-    window.addEventListener('load', showSecond);
-  });
+    });
+  }
 
   if (hasGsap) {
     const mmContacts = gsap.matchMedia();
